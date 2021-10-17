@@ -13,9 +13,8 @@ import javax.swing.JLabel;
 
 import edu.ncsu.monopoly.Player;
 
-
 public class BuyHouseDialog extends JDialog {
-	private JComboBox cboMonopoly; 
+	private JComboBox<String> cboMonopoly;
 	private JComboBox cboNumber;
 
 	private Player player;
@@ -36,7 +35,8 @@ public class BuyHouseDialog extends JDialog {
 
 	private JButton buildCancelButton() {
 		JButton btn = new JButton("Cancel");
-		btn.addActionListener(new ActionListener(){
+		btn.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				cancelClicked();
 			}
@@ -48,33 +48,30 @@ public class BuyHouseDialog extends JDialog {
 		cboMonopoly = new JComboBox(player.getMonopolies());
 		return cboMonopoly;
 	}
-	
+
 	private JComboBox buildNumberComboBox() {
-		cboNumber = new JComboBox(new Integer[]{
-				new Integer(1),
-				new Integer(2),
-				new Integer(3),
-				new Integer(4),
-				new Integer(5)});
+		cboNumber = new JComboBox(
+				new Integer[] { new Integer(1), new Integer(2), new Integer(3), new Integer(4), new Integer(5) });
 		return cboNumber;
 	}
 
 	private JButton buildOKButton() {
 		JButton btn = new JButton("OK");
-		btn.addActionListener(new ActionListener(){
+		btn.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				okClicked();
 			}
 		});
 		return btn;
 	}
-	
+
 	private void cancelClicked() {
 		this.dispose();
 	}
-	
+
 	private void okClicked() {
-		String monopoly = (String)cboMonopoly.getSelectedItem();
+		String monopoly = (String) cboMonopoly.getSelectedItem();
 		int number = cboNumber.getSelectedIndex() + 1;
 		player.purchaseHouse(monopoly, number);
 		this.dispose();
