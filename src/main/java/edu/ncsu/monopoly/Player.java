@@ -16,7 +16,6 @@ public class Player {
 	private ArrayList<Cell> railroads = new ArrayList<Cell>();
 	private ArrayList<Cell> utilities = new ArrayList<Cell>();
 
-	// a
 	public Player() {
 		GameBoard gb = GameMaster.instance().getGameBoard();
 		inJail = false;
