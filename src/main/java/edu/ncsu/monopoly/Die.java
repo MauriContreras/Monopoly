@@ -6,12 +6,12 @@ import java.util.Random;
 
 public class Die {
 
+	public static final int SIX = 6;
 	private Random rand;
-	public static final int someInt = 6;
 
 	public int getRoll() {
 		getRand();
-		return (this.rand.nextInt() * someInt) + 1;
+		return (this.rand.nextInt() * SIX) + 1;
 	}
 
 	public void getRand() {
