@@ -9,17 +9,17 @@ public class Die {
 	public static final int SIX = 6;
 	private Random rand;
 
-	public int getRoll() {
+	public int getRoll() throws NoSuchAlgorithmException {
 		getRand();
 		return (this.rand.nextInt() * SIX) + 1;
 	}
 
-	public void getRand() {
+	public void getRand() throws NoSuchAlgorithmException {
 		try {
 			this.rand = SecureRandom.getInstanceStrong();
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
-			throw new RuntimeException(e);
+			throw new NoSuchAlgorithmException(e);
 		}
 	}
 }

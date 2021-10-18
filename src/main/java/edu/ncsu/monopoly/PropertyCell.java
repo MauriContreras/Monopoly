@@ -18,30 +18,32 @@ public class PropertyCell extends Cell {
 	public int getNumHouses() {
 		return numHouses;
 	}
-    
-    public int getPrice() {
+
+	@Override
+	public int getPrice() {
 		return sellPrice;
 	}
 
 	public int getRent() {
 		int rentToCharge = rent;
-		String [] monopolies = owner.getMonopolies();
-		for(int i = 0; i < monopolies.length; i++) {
-			if(monopolies[i].equals(colorGroup)) {
+		String[] monopolies = owner.getMonopolies();
+		for (int i = 0; i < monopolies.length; i++) {
+			if (monopolies[i].equals(colorGroup)) {
 				rentToCharge = rent * 2;
 			}
 		}
-		if(numHouses > 0) {
+		if (numHouses > 0) {
 			rentToCharge = rent * (numHouses + 1);
 		}
 		return rentToCharge;
 	}
 
+	@Override
 	public void playAction() {
 		Player currentPlayer = null;
-		if(!isAvailable()) {
+		if (!isAvailable()) {
 			currentPlayer = GameMaster.instance().getCurrentPlayer();
-			if(owner != currentPlayer) {
+			if (owner != currentPlayer) {
 				currentPlayer.payRentTo(owner, getRent());
 			}
 		}
