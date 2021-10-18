@@ -4,110 +4,102 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-
 public class Player {
-	//the key of colorGroups is the name of the color group.
-	private Hashtable colorGroups = new Hashtable();
+	// the key of colorGroups is the name of the color group.
+	private Hashtable<String, Integer> colorGroups = new Hashtable<String, Integer>();
 	private boolean inJail;
 	private int money;
 	private String name;
 
 	private Cell position;
-	private ArrayList properties = new ArrayList();
-	private ArrayList railroads = new ArrayList();
-	private ArrayList utilities = new ArrayList();
-	
+	private ArrayList<PropertyCell> properties = new ArrayList<PropertyCell>();
+	private ArrayList<Cell> railroads = new ArrayList<Cell>();
+	private ArrayList<Cell> utilities = new ArrayList<Cell>();
+
 	public Player() {
 		GameBoard gb = GameMaster.instance().getGameBoard();
 		inJail = false;
-		if(gb != null) {
+		if (gb != null) {
 			position = gb.queryCell("Go");
 		}
 	}
 
-    public void buyProperty(Cell property, int amount) {
-        property.setOwner(this);
-        if(property instanceof PropertyCell) {
-            PropertyCell cell = (PropertyCell)property;
-            properties.add(cell);
-            colorGroups.put(
-                    cell.getColorGroup(), 
-                    new Integer(getPropertyNumberForColor(cell.getColorGroup())+1));
-        }
-        if(property instanceof RailRoadCell) {
-            railroads.add(property);
-            colorGroups.put(
-                    RailRoadCell.COLOR_GROUP, 
-                    new Integer(getPropertyNumberForColor(RailRoadCell.COLOR_GROUP)+1));
-        }
-        if(property instanceof UtilityCell) {
-            utilities.add(property);
-            colorGroups.put(
-                    UtilityCell.COLOR_GROUP, 
-                    new Integer(getPropertyNumberForColor(UtilityCell.COLOR_GROUP)+1));
-        }
-        setMoney(getMoney() - amount);
-    }
-	
+	public void buyProperty(Cell property, int amount) {
+		property.setOwner(this);
+		if (property instanceof PropertyCell) {
+			PropertyCell cell = (PropertyCell) property;
+			properties.add(cell);
+			colorGroups.put(cell.getColorGroup(), new Integer(getPropertyNumberForColor(cell.getColorGroup()) + 1));
+		}
+		if (property instanceof RailRoadCell) {
+			railroads.add(property);
+			colorGroups.put(RailRoadCell.COLOR_GROUP,
+					new Integer(getPropertyNumberForColor(RailRoadCell.COLOR_GROUP) + 1));
+		}
+		if (property instanceof UtilityCell) {
+			utilities.add(property);
+			colorGroups.put(UtilityCell.COLOR_GROUP,
+					new Integer(getPropertyNumberForColor(UtilityCell.COLOR_GROUP) + 1));
+		}
+		setMoney(getMoney() - amount);
+	}
+
 	public boolean canBuyHouse() {
 		return (getMonopolies().length != 0);
 	}
 
 	public boolean checkProperty(String property) {
-		for(int i=0;i<properties.size();i++) {
-			Cell cell = (Cell)properties.get(i);
-			if(cell.getName().equals(property)) {
+		for (int i = 0; i < properties.size(); i++) {
+			Cell cell = properties.get(i);
+			if (cell.getName().equals(property)) {
 				return true;
 			}
 		}
 		return false;
-		
+
 	}
-	
+
 	public void exchangeProperty(Player player) {
-		for(int i = 0; i < getPropertyNumber(); i++ ) {
+		for (int i = 0; i < getPropertyNumber(); i++) {
 			PropertyCell cell = getProperty(i);
 			cell.setOwner(player);
-			if(player == null) {
+			if (player == null) {
 				cell.setAvailable(true);
 				cell.setNumHouses(0);
-			}
-			else {
+			} else {
 				player.properties.add(cell);
-				colorGroups.put(
-						cell.getColorGroup(), 
-						new Integer(getPropertyNumberForColor(cell.getColorGroup())+1));
+				colorGroups.put(cell.getColorGroup(), new Integer(getPropertyNumberForColor(cell.getColorGroup()) + 1));
 			}
 		}
 		properties.clear();
 	}
-    
-    public Cell[] getAllProperties() {
-        ArrayList list = new ArrayList();
-        list.addAll(properties);
-        list.addAll(utilities);
-        list.addAll(railroads);
-        return (Cell[])list.toArray(new Cell[list.size()]);
-    }
+
+	public Cell[] getAllProperties() {
+		ArrayList<Cell> list = new ArrayList<Cell>();
+		list.addAll(properties);
+		list.addAll(utilities);
+		list.addAll(railroads);
+		return list.toArray(new Cell[list.size()]);
+	}
 
 	public int getMoney() {
 		return this.money;
 	}
-	
+
 	public String[] getMonopolies() {
-		ArrayList monopolies = new ArrayList();
-		Enumeration colors = colorGroups.keys();
-		while(colors.hasMoreElements()) {
-			String color = (String)colors.nextElement();
-            if(!(color.equals(RailRoadCell.COLOR_GROUP)) && !(color.equals(UtilityCell.COLOR_GROUP))) {
-    			Integer num = (Integer)colorGroups.get(color);
-    			GameBoard gameBoard = GameMaster.instance().getGameBoard();
-    			if(num.intValue() == gameBoard.getPropertyNumberForColor(color)) {
-    				monopolies.add(color);
-    			}
-            }
+		ArrayList<String> monopolies = new ArrayList<String>();
+		Enumeration<String> colors = colorGroups.keys();
+		while (colors.hasMoreElements()) {
+			String color = colors.nextElement();
+			if (!(color.equals(RailRoadCell.COLOR_GROUP)) && !(color.equals(UtilityCell.COLOR_GROUP))) {
+				Integer num = colorGroups.get(color);
+				GameBoard gameBoard = GameMaster.instance().getGameBoard();
+				if (num.intValue() == gameBoard.getPropertyNumberForColor(color)) {
+					monopolies.add(color);
+				}
+			}
 		}
-		return (String[])monopolies.toArray(new String[monopolies.size()]);
+		return monopolies.toArray(new String[monopolies.size()]);
 	}
 
 	public String getName() {
@@ -116,7 +108,7 @@ public class Player {
 
 	public void getOutOfJail() {
 		money -= JailCell.BAIL;
-		if(isBankrupt()) {
+		if (isBankrupt()) {
 			money = 0;
 			exchangeProperty(null);
 		}
@@ -127,18 +119,18 @@ public class Player {
 	public Cell getPosition() {
 		return this.position;
 	}
-	
+
 	public PropertyCell getProperty(int index) {
-		return (PropertyCell)properties.get(index);
+		return properties.get(index);
 	}
-	
+
 	public int getPropertyNumber() {
 		return properties.size();
 	}
 
 	private int getPropertyNumberForColor(String name) {
-		Integer number = (Integer)colorGroups.get(name);
-		if(number != null) {
+		Integer number = colorGroups.get(name);
+		if (number != null) {
 			return number.intValue();
 		}
 		return 0;
@@ -159,46 +151,45 @@ public class Player {
 	public int numberOfUtil() {
 		return getPropertyNumberForColor(UtilityCell.COLOR_GROUP);
 	}
-	
+
 	public void payRentTo(Player owner, int rentValue) {
-		if(money < rentValue) {
+		if (money < rentValue) {
 			owner.money += money;
 			money -= rentValue;
-		}
-		else {
+		} else {
 			money -= rentValue;
-			owner.money +=rentValue;
+			owner.money += rentValue;
 		}
-		if(isBankrupt()) {
+		if (isBankrupt()) {
 			money = 0;
 			exchangeProperty(owner);
 		}
 	}
-	
+
 	public void purchase() {
-		if(getPosition().isAvailable()) {
+		if (getPosition().isAvailable()) {
 			Cell c = getPosition();
 			c.setAvailable(false);
-			if(c instanceof PropertyCell) {
-				PropertyCell cell = (PropertyCell)c;
+			if (c instanceof PropertyCell) {
+				PropertyCell cell = (PropertyCell) c;
 				purchaseProperty(cell);
 			}
-			if(c instanceof RailRoadCell) {
-				RailRoadCell cell = (RailRoadCell)c;
+			if (c instanceof RailRoadCell) {
+				RailRoadCell cell = (RailRoadCell) c;
 				purchaseRailRoad(cell);
 			}
-			if(c instanceof UtilityCell) {
-				UtilityCell cell = (UtilityCell)c;
+			if (c instanceof UtilityCell) {
+				UtilityCell cell = (UtilityCell) c;
 				purchaseUtility(cell);
 			}
 		}
 	}
-	
+
 	public void purchaseHouse(String selectedMonopoly, int houses) {
 		GameBoard gb = GameMaster.instance().getGameBoard();
 		PropertyCell[] cells = gb.getPropertiesInMonopoly(selectedMonopoly);
-		if((money >= (cells.length * (cells[0].getHousePrice() * houses)))) {
-			for(int i = 0; i < cells.length; i++) {
+		if ((money >= (cells.length * (cells[0].getHousePrice() * houses)))) {
+			for (int i = 0; i < cells.length; i++) {
 				int newNumber = cells[i].getNumHouses() + houses;
 				if (newNumber <= 5) {
 					cells[i].setNumHouses(newNumber);
@@ -208,32 +199,32 @@ public class Player {
 			}
 		}
 	}
-	
+
 	private void purchaseProperty(PropertyCell cell) {
-        buyProperty(cell, cell.getPrice());
+		buyProperty(cell, cell.getPrice());
 	}
 
 	private void purchaseRailRoad(RailRoadCell cell) {
-	    buyProperty(cell, cell.getPrice());
+		buyProperty(cell, cell.getPrice());
 	}
 
 	private void purchaseUtility(UtilityCell cell) {
-	    buyProperty(cell, cell.getPrice());
+		buyProperty(cell, cell.getPrice());
 	}
 
-    public void sellProperty(Cell property, int amount) {
-        property.setOwner(null);
-        if(property instanceof PropertyCell) {
-            properties.remove(property);
-        }
-        if(property instanceof RailRoadCell) {
-            railroads.remove(property);
-        }
-        if(property instanceof UtilityCell) {
-            utilities.remove(property);
-        }
-        setMoney(getMoney() + amount);
-    }
+	public void sellProperty(Cell property, int amount) {
+		property.setOwner(null);
+		if (property instanceof PropertyCell) {
+			properties.remove(property);
+		}
+		if (property instanceof RailRoadCell) {
+			railroads.remove(property);
+		}
+		if (property instanceof UtilityCell) {
+			utilities.remove(property);
+		}
+		setMoney(getMoney() + amount);
+	}
 
 	public void setInJail(boolean inJail) {
 		this.inJail = inJail;
@@ -251,13 +242,14 @@ public class Player {
 		this.position = newPosition;
 	}
 
-    public String toString() {
-        return name;
-    }
-    
-    public void resetProperty() {
-    	properties = new ArrayList();
-    	railroads = new ArrayList();
-    	utilities = new ArrayList();
+	@Override
+	public String toString() {
+		return name;
+	}
+
+	public void resetProperty() {
+		properties = new ArrayList<PropertyCell>();
+		railroads = new ArrayList<Cell>();
+		utilities = new ArrayList<Cell>();
 	}
 }
