@@ -31,6 +31,6 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       - name: Build and analyze
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ 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 }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ 50d96e070ef010351a4140fcda285db61af08341 }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=is2:MonopolyCI
